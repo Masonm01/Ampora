@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import { useFollowedArtists } from '../../../context/FollowedArtistsContext';
 import { US_STATES, US_CITIES } from "../../helpers/usLocations";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
@@ -9,7 +10,7 @@ const ArtistDetailsPage = () => {
   const router = useRouter();
   const [artist, setArtist] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [following, setFollowing] = useState(false);
+  const { isFollowing, followArtist, unfollowArtist } = useFollowedArtists();
   // Event filter state
   const [eventState, setEventState] = useState("");
   const [eventCity, setEventCity] = useState("");
@@ -32,12 +33,6 @@ const ArtistDetailsPage = () => {
         }
         setArtist(found || { name: artistName });
         setLoading(false);
-      });
-    // Check if following
-    fetch("/api/users/user")
-      .then(res => res.json())
-      .then(data => {
-        setFollowing((data.data?.followedArtists || []).includes(artistName));
       });
     // Fetch events for this artist
     fetchEventsForArtist(artistName, eventState, eventCity, eventPage);
@@ -72,24 +67,24 @@ const ArtistDetailsPage = () => {
   };
 
   const handleFollow = async () => {
-  const rawName = Array.isArray(name) ? name[0] : name;
-  const artistName = rawName ? decodeURIComponent(rawName) : "";
+    const rawName = Array.isArray(name) ? name[0] : name;
+    const artistName = rawName ? decodeURIComponent(rawName) : "";
     try {
-      const res = await fetch("/api/users/follow-artist", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ artist: artistName }),
-        credentials: "include"
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setFollowing(true);
-        toast.success(`Now following ${artistName}`);
-      } else {
-        toast.error(data.error || "Failed to follow artist");
-      }
-    } catch {
-      toast.error("Failed to follow artist");
+      await followArtist(artistName);
+      toast.success(`Now following ${artistName}`);
+    } catch (e: any) {
+      toast.error(e.message || "Failed to follow artist");
+    }
+  };
+
+  const handleUnfollow = async () => {
+    const rawName = Array.isArray(name) ? name[0] : name;
+    const artistName = rawName ? decodeURIComponent(rawName) : "";
+    try {
+      await unfollowArtist(artistName);
+      toast.success(`Unfollowed ${artistName}`);
+    } catch (e: any) {
+      toast.error(e.message || "Failed to unfollow artist");
     }
   };
 
@@ -97,8 +92,8 @@ const ArtistDetailsPage = () => {
   if (!artist) return <div className="flex flex-col items-center justify-center min-h-screen py-2">Artist not found.</div>;
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen py-2 text-gray-900">
-      <h1 className="text-4xl font-bold mb-4">{decodeURIComponent(artist.name)}</h1>
+    <div className="flex flex-col items-center justify-center min-h-screen py-8" style={{ background: 'var(--background)', color: 'var(--foreground)' }}>
+      <h1 className="text-4xl font-bold mb-4" style={{ color: 'var(--secondary)' }}>{decodeURIComponent(artist.name)}</h1>
       {artist.images && artist.images.length > 0 ? (
         (() => {
           // Pick the largest image by width
@@ -106,36 +101,49 @@ const ArtistDetailsPage = () => {
           return <img src={bestImg.url} alt={decodeURIComponent(artist.name)} className="w-64 h-64 object-cover rounded-full mb-4" />;
         })()
       ) : (
-        <div className="w-64 h-64 rounded-full bg-gray-300 flex items-center justify-center text-gray-500 text-2xl mb-4">No Image</div>
+  <div className="w-64 h-64 rounded-full flex items-center justify-center text-2xl mb-4" style={{ background: 'var(--accent)', color: 'var(--secondary)' }}>No Image</div>
       )}
       {artist.externalLinks?.homepage && artist.externalLinks.homepage[0]?.url && (
-        <a href={artist.externalLinks.homepage[0].url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline mb-2">Official Website</a>
+        <a href={artist.externalLinks.homepage[0].url} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--secondary)', textDecoration: 'underline', marginBottom: '0.5rem', display: 'inline-block' }}>Official Website</a>
       )}
-      {artist.info && <p className="mb-4 max-w-xl text-center">{artist.info}</p>}
+  {artist.info && <p className="mb-4 max-w-xl text-center" style={{ color: 'var(--foreground)' }}>{artist.info}</p>}
+      {!isFollowing(artist?.name) && (
+        <button
+          className="px-6 py-2 rounded mb-4"
+          style={{ background: 'var(--secondary)', color: 'white' }}
+          onClick={handleFollow}
+        >
+          Follow
+        </button>
+      )}
+      {isFollowing(artist?.name) && (
+        <button
+          className="px-6 py-2 rounded mb-4"
+          style={{ background: 'var(--accent)', color: 'white' }}
+          onClick={handleUnfollow}
+        >
+          Unfollow
+        </button>
+      )}
       <button
-        className={`px-6 py-2 rounded text-white mb-4 ${following ? "bg-gray-400" : "bg-green-600 hover:bg-green-700"}`}
-        onClick={handleFollow}
-        disabled={following}
-      >
-        {following ? "Following" : "Follow"}
-      </button>
-      <button
-        className="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-600"
+        className="px-4 py-2 rounded"
+        style={{ background: 'var(--accent)', color: 'var(--foreground)' }}
         onClick={() => router.back()}
       >
         Back
       </button>
 
       {/* Upcoming Events Section */}
-      <div className="w-full max-w-2xl mt-8">
-        <h2 className="text-2xl font-bold mb-4 text-purple-800">Upcoming Events</h2>
-        <form className="flex flex-wrap gap-2 mb-4 items-center">
+      <div className="w-full max-w-2xl mt-8" style={{ background: 'var(--background)' }}>
+        <h2 className="text-2xl font-bold mb-4" style={{ color: 'var(--secondary)' }}>Upcoming Events</h2>
+  <form className="flex flex-wrap gap-2 mb-4 items-center">
           <label htmlFor="event-state">State:</label>
           <select
             id="event-state"
             value={eventState}
             onChange={e => { setEventState(e.target.value); setEventCity(""); setEventPage(0); }}
-            className="border rounded px-2 py-1 text-gray-900 bg-white"
+            className="border rounded px-2 py-1"
+            style={{ color: 'var(--foreground)', background: 'var(--accent)' }}
           >
             <option value="">All States</option>
             {US_STATES.map(state => (
@@ -147,7 +155,8 @@ const ArtistDetailsPage = () => {
             id="event-city"
             value={eventCity}
             onChange={e => { setEventCity(e.target.value); setEventPage(0); }}
-            className="border rounded px-2 py-1 text-gray-900 bg-white"
+            className="border rounded px-2 py-1"
+            style={{ color: 'var(--foreground)', background: 'var(--accent)' }}
             disabled={!eventState}
           >
             <option value="">{eventState ? "All Cities" : "Select a state first"}</option>
@@ -157,17 +166,17 @@ const ArtistDetailsPage = () => {
           </select>
         </form>
         {events.length === 0 ? (
-          <div className="text-gray-500 italic">No upcoming events found.</div>
+          <div style={{ color: 'var(--accent)', fontStyle: 'italic' }}>No upcoming events found.</div>
         ) : (
-          <ul className="divide-y divide-gray-200">
+          <ul style={{ borderTop: '1px solid var(--accent)' }}>
             {events.map(event => (
-              <li key={event.id} className="py-4 flex flex-col md:flex-row md:items-center gap-4">
+              <li key={event.id} className="py-4 flex flex-col md:flex-row md:items-center gap-4" style={{ borderBottom: '1px solid var(--accent)' }}>
                 <div className="flex-1">
-                  <div className="font-semibold text-lg">{event.name}</div>
-                  <div className="text-gray-600">{event.dates?.start?.localDate} {event.dates?.start?.localTime && (<>@ {event.dates.start.localTime}</>)}</div>
-                  <div className="text-gray-700">{event._embedded?.venues?.[0]?.name}, {event._embedded?.venues?.[0]?.city?.name}, {event._embedded?.venues?.[0]?.state?.name}</div>
-                  {event.info && <div className="text-gray-500 text-sm mt-1">{event.info}</div>}
-                  {event.url && <a href={event.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline text-sm">View Event</a>}
+                  <div className="font-semibold text-lg" style={{ color: 'var(--secondary)' }}>{event.name}</div>
+                  <div style={{ color: 'var(--foreground)' }}>{event.dates?.start?.localDate} {event.dates?.start?.localTime && (<>@ {event.dates.start.localTime}</>)}</div>
+                  <div style={{ color: 'var(--foreground)' }}>{event._embedded?.venues?.[0]?.name}, {event._embedded?.venues?.[0]?.city?.name}, {event._embedded?.venues?.[0]?.state?.name}</div>
+                  {event.info && <div style={{ color: 'var(--accent)', fontSize: '0.95em', marginTop: '0.25rem' }}>{event.info}</div>}
+                  {event.url && <a href={event.url} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--secondary)', textDecoration: 'underline', fontSize: '0.95em' }}>View Event</a>}
                 </div>
                 {event.images && event.images.length > 0 && (
                   <img
@@ -184,7 +193,8 @@ const ArtistDetailsPage = () => {
         {eventTotalPages > 1 && (
           <div className="flex gap-2 justify-center mt-4">
             <button
-              className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300"
+              className="px-3 py-1 rounded"
+              style={{ background: 'var(--secondary)', color: 'white' }}
               onClick={() => setEventPage(p => Math.max(0, p - 1))}
               disabled={eventPage === 0}
             >
@@ -192,7 +202,8 @@ const ArtistDetailsPage = () => {
             </button>
             <span className="px-2">Page {eventPage + 1} of {eventTotalPages}</span>
             <button
-              className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300"
+              className="px-3 py-1 rounded"
+              style={{ background: 'var(--secondary)', color: 'white' }}
               onClick={() => setEventPage(p => Math.min(eventTotalPages - 1, p + 1))}
               disabled={eventPage === eventTotalPages - 1}
             >

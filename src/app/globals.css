@@ -2,9 +2,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap');
 @import "tailwindcss";
 
+
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #F3E2D4;   /* light cream */
+  --foreground: #17313E;   /* deep blue */
+  --accent: #C5B0CD;       /* lavender */
+  --secondary: #415E72;    /* muted blue */
 }
 
 @theme inline {
@@ -14,12 +18,18 @@
   --font-mono: var(--font-geist-mono);
 }
 
+
+/* Optional: You can define a dark mode variant if you want, or remove this block */
+
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #1a5fad;
-    --foreground: #ededed;
+    --background: #17313E;
+    --foreground: #F3E2D4;
+    --accent: #415E72;
+    --secondary: #C5B0CD;
   }
 }
+
 
 
 body {
