@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
+import { US_STATES, US_CITIES } from "../helpers/usLocations";
 import {useRouter} from "next/navigation"
 import axios from "axios";
 import {toast} from "react-hot-toast"
@@ -11,7 +12,10 @@ export default function SignupPage() {
         email: "",
         password: "",
         username: "",
+        state: "",
+        city: "",
     })
+    const [cityOptions, setCityOptions] = useState<string[]>([]);
     const [buttonDisabled, setButtonDisabled] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
 
@@ -30,7 +34,15 @@ export default function SignupPage() {
     }
 
     useEffect(() => {
-        if(user.email.length > 0 && user.password.length > 0 && user.username.length> 0) {
+        if(user.state && US_CITIES[user.state]) {
+            setCityOptions(US_CITIES[user.state]);
+        } else {
+            setCityOptions([]);
+        }
+    }, [user.state]);
+
+    useEffect(() => {
+        if(user.email.length > 0 && user.password.length > 0 && user.username.length > 0 && user.state.length > 0 && user.city.length > 0) {
             setButtonDisabled(false);
         } else {
             setButtonDisabled(true);
@@ -38,7 +50,8 @@ export default function SignupPage() {
     }, [user])
 
     return (
-        <div className="p-2 flex flex-col items-center justify-center min-h-screen py-2">
+        <div className="relative p-2 flex flex-col items-center justify-center min-h-screen py-2">
+            <Link href="/" className="absolute top-4 left-4 text-white-600 hover:underline">Home</Link>
             <h1>{loading ? "Processing" : "Signup"}</h1>
             <hr />
             <label htmlFor="username">username</label>
@@ -55,6 +68,31 @@ export default function SignupPage() {
                 onChange={(e) => setUser({...user, email: e.target.value})}
                 placeholder="email"
             />
+            <label htmlFor="state">state</label>
+            <select
+                id="state"
+                value={user.state}
+                onChange={e => setUser({ ...user, state: e.target.value, city: "" })}
+                className="border rounded px-2 py-1 mb-2 text-gray-900 bg-white"
+            >
+                <option value="">Select a state</option>
+                {US_STATES.map(state => (
+                    <option key={state.abbr} value={state.abbr}>{state.name}</option>
+                ))}
+            </select>
+            <label htmlFor="city">city</label>
+            <select
+                id="city"
+                value={user.city}
+                onChange={e => setUser({ ...user, city: e.target.value })}
+                className="border rounded px-2 py-1 mb-2 text-gray-900 bg-white"
+                disabled={!user.state}
+            >
+                <option value="">{user.state ? "Select a city" : "Select a state first"}</option>
+                {cityOptions.map(city => (
+                    <option key={city} value={city}>{city}</option>
+                ))}
+            </select>
             <label htmlFor="password">password</label>
             <input id="password"
                 type="password"

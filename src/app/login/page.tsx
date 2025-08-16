@@ -5,8 +5,6 @@ import {useRouter} from "next/navigation"
 import axios from "axios";
 import {toast} from "react-hot-toast"
 
-
-
 export default function LoginPage() {
     const router = useRouter();
     const [user, setUser] = React.useState({
@@ -40,7 +38,8 @@ export default function LoginPage() {
     }, [user])
 
     return (
-        <div className="p-2 flex flex-col items-center justify-center min-h-screen py-2">
+        <div className="relative p-2 flex flex-col items-center justify-center min-h-screen py-2">
+            <Link href="/" className="absolute top-4 left-4 text-white-600 hover:underline">Home</Link>
             <h1>Login</h1>
             <hr />
             <label htmlFor="email">email</label>
