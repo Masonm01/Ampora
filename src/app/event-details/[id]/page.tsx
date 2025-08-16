@@ -36,8 +36,16 @@ const EventDetailsPage = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen py-2">
       <h1 className="text-3xl font-bold mb-4 text-center">{event.name}</h1>
-      {event.images && event.images[0] && (
-        <img src={event.images[0].url} alt={event.name} className="w-80 h-48 object-cover rounded mb-4" />
+      {event.images && event.images.length > 0 && (
+        (() => {
+          // Pick the largest image by width
+          const bestImg = event.images.reduce((prev: any, curr: any) => (curr.width > prev.width ? curr : prev), event.images[0]);
+          return <img src={bestImg.url} alt={event.name} className="w-80 h-48 object-cover rounded mb-4" />;
+        })()
+      )}
+      {/* Event Description */}
+      {event.info && (
+        <div className="mb-4 max-w-xl text-center text-gray-700 italic">{event.info}</div>
       )}
       {/* Date and Time */}
       {event.dates?.start?.dateTime && (

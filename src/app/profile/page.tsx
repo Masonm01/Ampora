@@ -127,7 +127,13 @@ const ProfilePage = () => {
             .then(data => {
                 const events = data._embedded?.events || [];
                 const totalPages = data.page?.totalPages || 1;
-                setEvents(events);
+                                // Sort events by soonest date
+                                                const sortedEvents = events.slice().sort((a: any, b: any) => {
+                                                    const dateA = new Date(a.dates?.start?.dateTime || a.dates?.start?.localDate || 0).getTime();
+                                                    const dateB = new Date(b.dates?.start?.dateTime || b.dates?.start?.localDate || 0).getTime();
+                                                    return dateA - dateB;
+                                                });
+                                setEvents(sortedEvents);
                 setPageInfo({ totalPages });
                 // Save to cache
                 eventCache.current[cacheKey] = { events, totalPages };
@@ -167,7 +173,13 @@ const ProfilePage = () => {
                                     <ul>
                                         {followedArtists.length === 0 && <li className="text-gray-500 italic">No artists followed yet.</li>}
                                         {followedArtists.map(artist => (
-                                            <li key={artist} className="py-1 truncate text-blue-900 hover:text-purple-700 transition-colors cursor-pointer">{artist}</li>
+                                            <li
+                                                key={artist}
+                                                className="py-1 truncate text-blue-900 hover:text-purple-700 transition-colors cursor-pointer"
+                                                onClick={() => router.push(`/artist-details/${encodeURIComponent(artist)}`)}
+                                            >
+                                                {artist}
+                                            </li>
                                         ))}
                                     </ul>
                                 </>
