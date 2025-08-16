@@ -16,6 +16,8 @@ const ProfilePage = () => {
     const [searchState, setSearchState] = useState("");
     const [searchCity, setSearchCity] = useState("");
     const [events, setEvents] = useState([]);
+    const [followedArtists, setFollowedArtists] = useState<string[]>([]);
+    const [collapsed, setCollapsed] = useState(false);
     // In-memory cache for event search results
     const eventCache = useRef<{ [key: string]: any }>({});
     // Debounce timer
@@ -57,6 +59,8 @@ const ProfilePage = () => {
                 if (stateParam && US_CITIES[stateParam]) {
                     setCityOptions(US_CITIES[stateParam]);
                 }
+                // Load followed artists from user data
+                setFollowedArtists(data.data?.followedArtists || []);
             });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -142,9 +146,36 @@ const ProfilePage = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchCity, searchState, page, searchTerm]);
 
-    return (
-        <div className="flex flex-col items-center justify-center min-h-screen py-2">
+        return (
+                <div className="flex flex-row min-h-screen py-2">
+                        {/* Sidebar for followed artists */}
+                        <aside className={`transition-all duration-300 bg-gradient-to-b from-blue-100 via-purple-900 to-pink-100 border-r p-4 hidden md:flex flex-col rounded-r-xl shadow-lg ${collapsed ? 'w-12' : 'w-48'}`}>
+                            <button
+                                className="mb-2 self-end text-purple-800 hover:text-purple-600 focus:outline-none"
+                                title={collapsed ? 'Expand' : 'Collapse'}
+                                onClick={() => setCollapsed(c => !c)}
+                            >
+                                {collapsed ? (
+                                    <span>&#9654;</span> // right arrow
+                                ) : (
+                                    <span>&#9664;</span> // left arrow
+                                )}
+                            </button>
+                            {!collapsed && (
+                                <>
+                                    <h2 className="text-xl font-bold mb-3 text-purple-800">Followed Artists</h2>
+                                    <ul>
+                                        {followedArtists.length === 0 && <li className="text-gray-500 italic">No artists followed yet.</li>}
+                                        {followedArtists.map(artist => (
+                                            <li key={artist} className="py-1 truncate text-blue-900 hover:text-purple-700 transition-colors cursor-pointer">{artist}</li>
+                                        ))}
+                                    </ul>
+                                </>
+                            )}
+                        </aside>
+                        <div className="flex-1 flex flex-col items-center">
             <Link href="/account-information" className="text-2xl font-bold text-blue-700 hover:underline mb-2">Account</Link>
+            <Link href="/follow-artists" className="mb-4 px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700">Follow Artists</Link>
             <hr />
             <p>Welcome, <span className="font-semibold">{username}</span>!</p>
             <p className="mt-2">Home State: <span className="font-semibold">{homeState}</span> | Home City: <span className="font-semibold">{homeCity}</span></p>
@@ -232,6 +263,7 @@ const ProfilePage = () => {
                         Next
                     </button>
                 </div>
+            </div>
             </div>
         </div>
     );
