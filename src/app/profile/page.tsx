@@ -188,9 +188,37 @@ const ProfilePage = () => {
                 <button onClick={handleLogout} className="ml-2" style={{ background: '#689B8A', color: 'white', fontWeight: 'bold', padding: '0.5rem 1rem', borderRadius: '0.375rem' }}>Logout</button>
             </div>
             {/* ...existing code... */}
-            <hr />
-            <h2 className='text-2xl'>Welcome, <span className="font-semibold">{user?.username || ""}</span>!</h2>
-            <p className="mt-2">Home State: <span className="font-semibold">{user?.state || ""}</span> | Home City: <span className="font-semibold">{user?.city || ""}</span></p>
+                        <hr />
+                        <h2 className='text-2xl'>Welcome, <span className="font-semibold">{user?.username || ""}</span>!</h2>
+                                                {!user?.isVerified && (
+                                                        <div className="w-full max-w-xl bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 my-4 rounded flex flex-col items-start gap-2">
+                                                                <strong>Email not verified.</strong> Please check your inbox and click the verification link to unlock all features.
+                                                                <button
+                                                                    className="mt-2 px-4 py-1 rounded font-bold transition-colors"
+                                                                    style={{ background: '#415E72', color: 'white' }}
+                                                                    onClick={async () => {
+                                                                        try {
+                                                                            const res = await fetch('/api/users/resend-verification', {
+                                                                                method: 'POST',
+                                                                                headers: { 'Content-Type': 'application/json' },
+                                                                                body: JSON.stringify({ email: user?.email })
+                                                                            });
+                                                                            const data = await res.json();
+                                                                            if (res.ok) {
+                                                                                toast.success('Verification email resent!');
+                                                                            } else {
+                                                                                toast.error(data.error || 'Failed to resend email.');
+                                                                            }
+                                                                        } catch (err) {
+                                                                            toast.error('Failed to resend email.');
+                                                                        }
+                                                                    }}
+                                                                >
+                                                                    Resend Verification Email
+                                                                </button>
+                                                        </div>
+                                                )}
+                        <p className="mt-2">Home State: <span className="font-semibold">{user?.state || ""}</span> | Home City: <span className="font-semibold">{user?.city || ""}</span></p>
             <form className="mt-4 flex items-center gap-2" onSubmit={e => { e.preventDefault(); }}>
                 <label htmlFor="state-select">State:</label>
                 <select
@@ -248,7 +276,8 @@ const ProfilePage = () => {
                     {events.length === 0 && <li>No events found.</li>}
                     {events.map((event: any) => (
                         <li key={event.id} className="mb-2 p-2 border rounded flex items-center gap-4">
-                            <Link href={`/event-details/${event.id}`} className="flex items-center gap-4 w-full hover:bg-gray-100 rounded transition-colors">
+                    <Link href={`/event-details/${event.id}`} className="flex items-center gap-4 w-full rounded transition-colors" style={{ transition: 'background 0.2s', }}
+                        onMouseEnter={e => (e.currentTarget.style.background = '#7c807e')} onMouseLeave={e => (e.currentTarget.style.background = '')}>
                                 {event.images && event.images[0] && (
                                     <img src={event.images[0].url} alt={event.name} className="w-24 h-16 object-cover rounded" />
                                 )}

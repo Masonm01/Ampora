@@ -8,6 +8,7 @@ interface User {
   state?: string;
   city?: string;
   followedArtists?: string[];
+  isVerified?: boolean;
   // Add other user fields as needed
 }
 

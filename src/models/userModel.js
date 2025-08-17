@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, "Please provide a city"],
   },
-  isVerfied: {
+  isVerified: {
     type: Boolean,
     default: false,
   },

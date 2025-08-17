@@ -1,6 +1,8 @@
+
 import {connect} from '@/dbConfig/dbsConfig';
 import User from "@/models/userModel"
 import { NextRequest, NextResponse } from 'next/server';
+import { triggerVerification } from '@/helpers/triggerVerification';
 
 
 connect();
@@ -28,11 +30,14 @@ export async function POST(request: NextRequest){
             city
         })
 
-        const savedUser = await newUser.save()
+
+        const savedUser = await newUser.save();
+        // Send verification email in the background
+        triggerVerification(savedUser).catch((err) => console.error('Email error:', err));
         console.log(savedUser);
 
         return NextResponse.json({
-            message: "Created User Succesfully",
+            message: "Created User Succesfully. Verification email sent.",
             success: true,
             savedUser
         })

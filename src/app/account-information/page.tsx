@@ -79,47 +79,57 @@ const AccountInformationPage = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen py-2 text-gray-900">
-      <h1 className="text-3xl font-bold mb-4 text-gray-900">Account Information</h1>
-      <form onSubmit={handleAccountUpdate} className="mb-8 p-4 border rounded w-full max-w-md bg-white text-gray-900">
-        <h2 className="text-xl font-semibold mb-2 text-gray-900">Update Username & Home Location</h2>
-        <label className="block mb-2">Username
-          <input type="text" value={username} onChange={e => setUsername(e.target.value)} className="w-full border rounded px-2 py-1 mb-2 text-gray-900" />
-        </label>
-        <label className="block mb-2">State
-          <select value={state} onChange={e => setState(e.target.value)} className="w-full border rounded px-2 py-1 mb-2 text-gray-900">
-            <option value="">Select a state</option>
-            {US_STATES.map(s => <option key={s.abbr} value={s.abbr}>{s.name}</option>)}
-          </select>
-        </label>
-        <label className="block mb-2">City
-          <select value={city} onChange={e => setCity(e.target.value)} className="w-full border rounded px-2 py-1 mb-2 text-gray-900" disabled={!state}>
-            <option value="">{state ? "Select a city" : "Select a state first"}</option>
-            {cityOptions.map(c => <option key={c} value={c}>{c}</option>)}
-          </select>
-        </label>
-        <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Update Info</button>
-      </form>
-      <form onSubmit={handlePasswordUpdate} className="p-4 border rounded w-full max-w-md bg-white text-gray-900">
-        <h2 className="text-xl font-semibold mb-2 text-gray-900">Change Password</h2>
-        <label className="block mb-2">Old Password
-          <input type="password" value={oldPassword} onChange={e => setOldPassword(e.target.value)} className="w-full border rounded px-2 py-1 mb-2 text-gray-900" />
-        </label>
-        <label className="block mb-2">New Password
-          <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} className="w-full border rounded px-2 py-1 mb-2 text-gray-900" />
-        </label>
-        <label className="block mb-2">Confirm New Password
-          <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} className="w-full border rounded px-2 py-1 mb-2 text-gray-900" />
-        </label>
-        <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Change Password</button>
-      </form>
-      <button
-        className="mt-6 px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-600"
-        type="button"
-        onClick={() => router.push("/profile")}
-      >
-        Back to Profile
-      </button>
+    <div className="flex flex-col items-center justify-center min-h-screen py-8 px-4" style={{ background: 'var(--background)', color: 'var(--foreground)' }}>
+      <h1 className="text-3xl font-bold mb-6" style={{ color: 'var(--secondary)' }}>Account Information</h1>
+      <div className="w-full max-w-md bg-white bg-opacity-80 rounded-xl shadow-lg p-8 flex flex-col items-center" style={{ background: 'var(--accent)' }}>
+        <form onSubmit={handleAccountUpdate} className="mb-8 w-full">
+          <h2 className="text-xl font-semibold mb-4" style={{ color: 'var(--secondary)' }}>Update Username & Home Location</h2>
+          <label className="block mb-2 font-medium">Username
+            <input type="text" value={username} onChange={e => setUsername(e.target.value)}
+              className="w-full mb-4 px-3 py-2 rounded border border-[var(--secondary)] bg-white text-gray-900 placeholder-gray-800/60 focus:outline-none focus:ring-2 focus:ring-[var(--secondary)]" />
+          </label>
+          <label className="block mb-2 font-medium">State
+            <select value={state} onChange={e => setState(e.target.value)}
+              className="w-full mb-4 px-3 py-2 rounded border border-[var(--secondary)] bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-[var(--secondary)]">
+              <option value="">Select a state</option>
+              {US_STATES.map(s => <option key={s.abbr} value={s.abbr}>{s.name}</option>)}
+            </select>
+          </label>
+          <label className="block mb-2 font-medium">City
+            <select value={city} onChange={e => setCity(e.target.value)}
+              className="w-full mb-4 px-3 py-2 rounded border border-[var(--secondary)] bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-[var(--secondary)]"
+              disabled={!state}>
+              <option value="">{state ? "Select a city" : "Select a state first"}</option>
+              {cityOptions.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
+          </label>
+          <button type="submit" className="w-full py-2 rounded font-bold transition-colors" style={{ background: '#689B8A', color: 'white' }}>Update Info</button>
+        </form>
+        <form onSubmit={handlePasswordUpdate} className="w-full">
+          <h2 className="text-xl font-semibold mb-4" style={{ color: 'var(--secondary)' }}>Change Password</h2>
+          <label className="block mb-2 font-medium">Old Password
+            <input type="password" value={oldPassword} onChange={e => setOldPassword(e.target.value)}
+              className="w-full mb-4 px-3 py-2 rounded border border-[var(--secondary)] bg-white text-gray-900 placeholder-gray-800/60 focus:outline-none focus:ring-2 focus:ring-[var(--secondary)]" />
+          </label>
+          <label className="block mb-2 font-medium">New Password
+            <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)}
+              className="w-full mb-4 px-3 py-2 rounded border border-[var(--secondary)] bg-white text-gray-900 placeholder-gray-800/60 focus:outline-none focus:ring-2 focus:ring-[var(--secondary)]" />
+          </label>
+          <label className="block mb-2 font-medium">Confirm New Password
+            <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)}
+              className="w-full mb-4 px-3 py-2 rounded border border-[var(--secondary)] bg-white text-gray-900 placeholder-gray-800/60 focus:outline-none focus:ring-2 focus:ring-[var(--secondary)]" />
+          </label>
+          <button type="submit" className="w-full py-2 rounded font-bold transition-colors" style={{ background: '#689B8A', color: 'white' }}>Change Password</button>
+        </form>
+        <button
+          className="mt-6 w-full py-2 rounded font-bold transition-colors"
+          style={{ background: '#415E72', color: 'white' }}
+          type="button"
+          onClick={() => router.push("/profile")}
+        >
+          Back to Profile
+        </button>
+      </div>
     </div>
   );
 };
