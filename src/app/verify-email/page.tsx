@@ -1,6 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { useRouter, useSearchParams } from "next/navigation";
+// ...existing code...
 
 export default function VerifyEmailPage() {
   // const router = useRouter();

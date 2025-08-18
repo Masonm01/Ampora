@@ -27,12 +27,14 @@ export default function Home() {
       </nav>
       {/* Hero section with background image behind text */}
       <section className="relative w-full flex flex-col items-center justify-center text-center px-4 z-0" style={{ minHeight: '60vh' }}>
-        <img
-          src="/homepage background.webp"
-          alt="Ampora Live Music Background"
-          className="absolute inset-0 w-full h-full object-cover opacity-70 z-0"
-          style={{ pointerEvents: 'none' }}
-        />
+    <Image
+      src="/homepage background.webp"
+      alt="Ampora Live Music Background"
+      fill
+      className="absolute inset-0 w-full h-full object-cover opacity-70 z-0"
+      style={{ pointerEvents: 'none' }}
+      priority
+    />
         <div className="relative z-10 flex flex-col items-center justify-center w-full">
           <div
             className="rounded-xl p-6 shadow-2xl inline-block max-w-xl mt-8"

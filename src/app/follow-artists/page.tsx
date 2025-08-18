@@ -1,10 +1,13 @@
+
 "use client";
 import Image from 'next/image';
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
-
 import { useFollowedArtists } from '../../context/FollowedArtistsContext';
+
+const FollowArtistsPage = () => {
+  const [search, setSearch] = useState("");
 
 const FollowArtistsPage = () => {
   const [search, setSearch] = useState("");
@@ -37,7 +40,7 @@ const FollowArtistsPage = () => {
             }));
           }
           setResults(artists);
-    } catch (err) {
+    } catch {
       toast.error("Failed to search for artists");
     }
     setLoading(false);
@@ -122,7 +125,7 @@ const FollowArtistsPage = () => {
         ))}
       </ul>
       <div className="mt-8 w-full max-w-md" style={{ background: 'var(--accent)', borderRadius: '0.5rem', padding: '1rem' }}>
-        <h2 className="text-xl font-semibold mb-2" style={{ color: 'var(--secondary)' }}>Artists You're Following</h2>
+  <h2 className="text-xl font-semibold mb-2" style={{ color: 'var(--secondary)' }}>Artists You&apos;re Following</h2>
         <ul>
           {followedArtists.length === 0 && <li style={{ color: 'var(--foreground)', opacity: 0.7 }}>You aren&apos;t following any artists yet.</li>}
           {followedArtists.map((artist: string) => (
@@ -147,5 +150,7 @@ const FollowArtistsPage = () => {
     </div>
   );
 };
+
+}
 
 export default FollowArtistsPage;

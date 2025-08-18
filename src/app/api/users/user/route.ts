@@ -1,5 +1,7 @@
+// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 import { getDataFromToken } from "@/helpers/getDataFromToken";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 getDataFromToken;
 
 import { NextRequest, NextResponse } from "next/server";

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function GET(request: NextRequest) {
   const apiKey = process.env.TICKETMASTER_API_KEY;
   const url = `https://app.ticketmaster.com/discovery/v2/events.json?apikey=${apiKey}&size=10`;

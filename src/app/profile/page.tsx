@@ -1,3 +1,4 @@
+// ...existing code...
 "use client";
 import Link from 'next/link';
 import Image from 'next/image';
@@ -21,7 +22,7 @@ interface Event {
 }
 
 const ProfilePage = () => {
-        const { user, logout: contextLogout, loading } = useUserAuth();
+    const { user, logout: contextLogout } = useUserAuth();
         const router = useRouter();
         const searchParams = useSearchParams();
         const pathname = usePathname();
@@ -30,10 +31,12 @@ const ProfilePage = () => {
         const [events, setEvents] = useState<Event[]>([]);
         const { followedArtists } = useFollowedArtists();
         const [collapsed, setCollapsed] = useState(false);
+        // Debounce timer must be declared before all uses
+        const debounceTimer = useRef<NodeJS.Timeout | null>(null);
         // In-memory cache for event search results
         const eventCache = useRef<{ [key: string]: { events: Event[]; totalPages: number } }>({});
-        // Debounce timer
-        const debounceTimer = useRef<NodeJS.Timeout | null>(null);
+    // Debounce timer
+    // const debounceTimer = useRef<NodeJS.Timeout | null>(null);
         const [cityOptions, setCityOptions] = useState<string[]>([]);
         const [page, setPage] = useState(0);
         const [pageInfo, setPageInfo] = useState({ totalPages: 1 });
@@ -60,10 +63,8 @@ const ProfilePage = () => {
         const cityParam = searchParams.get("city") || user.city || "";
         const termParam = searchParams.get("term") || "";
         const pageParam = searchParams.get("page") || "0";
-        setSearchState(stateParam);
-        setSearchCity(cityParam);
-        setSearchTerm(termParam);
-        setPage(Number(pageParam));
+    setSearchState(stateParam);
+    setPage(Number(pageParam));
         if (stateParam && US_CITIES[stateParam]) {
             setCityOptions(US_CITIES[stateParam]);
         }

@@ -1,8 +1,8 @@
+
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(request: NextRequest, context: { params: { name: string } }) {
+export async function GET(request: NextRequest, { params }: { params: { name: string } }) {
   const apiKey = process.env.TICKETMASTER_API_KEY;
-  const params = await context.params;
   const name = params.name;
   if (!name) {
     return NextResponse.json({ error: "Missing artist name" }, { status: 400 });
