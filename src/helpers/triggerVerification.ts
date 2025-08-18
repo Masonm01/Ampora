@@ -3,7 +3,15 @@ import { sendVerificationEmail } from './sendVerificationEmail';
 import crypto from 'crypto';
 import User from '@/models/userModel';
 
-export async function triggerVerification(user: any) {
+interface UserType {
+  email: string;
+  username: string;
+  verifyToken?: string;
+  verifyTokenExpiry?: number;
+  save: () => Promise<void>;
+}
+
+export async function triggerVerification(user: UserType) {
   // Generate token
   const verifyToken = crypto.randomBytes(32).toString('hex');
   const verifyTokenExpiry = Date.now() + 1000 * 60 * 60 * 24; // 24 hours

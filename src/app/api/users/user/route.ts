@@ -13,7 +13,8 @@ export async function GET(request: NextRequest) {
         const userId = await getDataFromToken(request);
         const user = await User.findOne({ _id: userId }).select('-password');
         return NextResponse.json({message: 'User fetched successfully', data: user }, { status: 200 });
-    } catch (error: any) {
-        return NextResponse.json({ message: 'Internal Server Error: ' + error.message }, { status: 500 });
+    } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : 'Unknown error';
+        return NextResponse.json({ message: 'Internal Server Error: ' + message }, { status: 500 });
     }
 }

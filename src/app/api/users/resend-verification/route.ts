@@ -19,13 +19,15 @@ export async function POST(request: NextRequest) {
     }
     try {
       await triggerVerification(user);
-    } catch (emailErr: any) {
+    } catch (emailErr: unknown) {
+      const message = emailErr instanceof Error ? emailErr.message : 'Unknown error';
       console.error('Resend verification: Error sending email', emailErr);
-      return NextResponse.json({ error: 'Failed to send verification email: ' + emailErr.message }, { status: 500 });
+      return NextResponse.json({ error: 'Failed to send verification email: ' + message }, { status: 500 });
     }
     return NextResponse.json({ message: 'Verification email resent' });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
     console.error('Resend verification: Unexpected error', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

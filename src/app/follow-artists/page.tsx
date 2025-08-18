@@ -24,9 +24,13 @@ const FollowArtistsPage = () => {
           const res = await fetch(`/api/ticketmaster/attraction/${encodeURIComponent(search)}`);
           const data = await res.json();
           // Extract artist names and images from attractions
+          interface Attraction {
+            name: string;
+            images?: { url: string }[];
+          }
           let artists: { name: string; image?: string }[] = [];
           if (data._embedded?.attractions) {
-            artists = data._embedded.attractions.map((a: any) => ({
+            artists = data._embedded.attractions.map((a: Attraction) => ({
               name: a.name,
               image: a.images?.[0]?.url
             }));
@@ -47,8 +51,9 @@ const FollowArtistsPage = () => {
     try {
       await followArtist(artist);
       toast.success(`Now following ${artist}`);
-    } catch (e: any) {
-      toast.error(e.message || "Failed to follow artist");
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : "Failed to follow artist";
+      toast.error(message);
     }
   };
 
@@ -57,8 +62,9 @@ const FollowArtistsPage = () => {
     try {
       await unfollowArtist(artist);
       toast.success(`Unfollowed ${artist}`);
-    } catch (e: any) {
-      toast.error(e.message || "Failed to unfollow artist");
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : "Failed to unfollow artist";
+      toast.error(message);
     }
   };
 
@@ -117,7 +123,7 @@ const FollowArtistsPage = () => {
       <div className="mt-8 w-full max-w-md" style={{ background: 'var(--accent)', borderRadius: '0.5rem', padding: '1rem' }}>
         <h2 className="text-xl font-semibold mb-2" style={{ color: 'var(--secondary)' }}>Artists You're Following</h2>
         <ul>
-          {followedArtists.length === 0 && <li style={{ color: 'var(--foreground)', opacity: 0.7 }}>You aren't following any artists yet.</li>}
+          {followedArtists.length === 0 && <li style={{ color: 'var(--foreground)', opacity: 0.7 }}>You aren&apos;t following any artists yet.</li>}
           {followedArtists.map((artist: string) => (
             <li key={artist} className="py-1 flex justify-between items-center">
               <span className="cursor-pointer hover:underline" style={{ color: 'var(--foreground)' }} onClick={() => router.push(`/artist-details/${encodeURIComponent(artist)}`)}>{artist}</span>

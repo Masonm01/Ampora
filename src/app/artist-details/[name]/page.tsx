@@ -5,17 +5,35 @@ import { US_STATES, US_CITIES } from "../../helpers/usLocations";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 
+
+interface Artist {
+  name: string;
+  images?: { url: string; width: number }[];
+  externalLinks?: { homepage?: { url: string }[] };
+  info?: string;
+}
+
+interface Event {
+  id: string;
+  name: string;
+  dates?: { start?: { localDate?: string; localTime?: string; dateTime?: string } };
+  _embedded?: { venues?: { name?: string; city?: { name?: string }; state?: { name?: string } }[] };
+  info?: string;
+  url?: string;
+  images?: { url: string; width: number }[];
+}
+
 const ArtistDetailsPage = () => {
   const { name } = useParams();
   const router = useRouter();
-  const [artist, setArtist] = useState<any>(null);
+  const [artist, setArtist] = useState<Artist | null>(null);
   const [loading, setLoading] = useState(true);
   const { isFollowing, followArtist, unfollowArtist } = useFollowedArtists();
   // Event filter state
   const [eventState, setEventState] = useState("");
   const [eventCity, setEventCity] = useState("");
   const [eventPage, setEventPage] = useState(0);
-  const [events, setEvents] = useState<any[]>([]);
+  const [events, setEvents] = useState<Event[]>([]);
   const [eventTotalPages, setEventTotalPages] = useState(1);
   const [cityOptions, setCityOptions] = useState<string[]>([]);
 
@@ -54,9 +72,9 @@ const ArtistDetailsPage = () => {
     fetch(url)
       .then(res => res.json())
       .then(data => {
-        const events = data._embedded?.events || [];
+        const events: Event[] = data._embedded?.events || [];
         // Sort events by soonest date
-        const sortedEvents = events.slice().sort((a: any, b: any) => {
+        const sortedEvents = events.slice().sort((a: Event, b: Event) => {
           const dateA = new Date(a.dates?.start?.dateTime || a.dates?.start?.localDate || 0).getTime();
           const dateB = new Date(b.dates?.start?.dateTime || b.dates?.start?.localDate || 0).getTime();
           return dateA - dateB;
@@ -72,8 +90,9 @@ const ArtistDetailsPage = () => {
     try {
       await followArtist(artistName);
       toast.success(`Now following ${artistName}`);
-    } catch (e: any) {
-      toast.error(e.message || "Failed to follow artist");
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : "Failed to follow artist";
+      toast.error(message);
     }
   };
 
@@ -83,8 +102,9 @@ const ArtistDetailsPage = () => {
     try {
       await unfollowArtist(artistName);
       toast.success(`Unfollowed ${artistName}`);
-    } catch (e: any) {
-      toast.error(e.message || "Failed to unfollow artist");
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : "Failed to unfollow artist";
+      toast.error(message);
     }
   };
 
@@ -97,7 +117,7 @@ const ArtistDetailsPage = () => {
       {artist.images && artist.images.length > 0 ? (
         (() => {
           // Pick the largest image by width
-          const bestImg = artist.images.reduce((prev: any, curr: any) => (curr.width > prev.width ? curr : prev), artist.images[0]);
+          const bestImg = artist.images.reduce((prev, curr) => (curr.width > prev.width ? curr : prev), artist.images[0]);
           return <img src={bestImg.url} alt={decodeURIComponent(artist.name)} className="w-64 h-64 object-cover rounded-full mb-4" />;
         })()
       ) : (
@@ -180,7 +200,7 @@ const ArtistDetailsPage = () => {
                 </div>
                 {event.images && event.images.length > 0 && (
                   <img
-                    src={event.images.reduce((prev: any, curr: any) => (curr.width > prev.width ? curr : prev), event.images[0]).url}
+                    src={event.images.reduce((prev, curr) => (curr.width > prev.width ? curr : prev), event.images[0]).url}
                     alt={event.name}
                     className="w-32 h-20 object-cover rounded shadow"
                   />

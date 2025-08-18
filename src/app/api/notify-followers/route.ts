@@ -12,8 +12,29 @@ async function getEventsForArtistInState(artist: string, state: string) {
   return data._embedded?.events || [];
 }
 
+
+// Types for user and event
+interface NotificationUser {
+  email: string;
+  username: string;
+  state: string;
+  followedArtists: string[];
+}
+
+interface TicketmasterEvent {
+  name: string;
+  dates?: { start?: { localDate?: string } };
+  _embedded?: {
+    venues?: Array<{
+      city?: { name?: string };
+      state?: { stateCode?: string };
+    }>;
+  };
+  url: string;
+}
+
 // Helper to send notification email
-async function sendEventNotification(user: any, artist: any, event: any) {
+async function sendEventNotification(user: NotificationUser, artist: string, event: TicketmasterEvent) {
   const subject = `New ${artist} event in ${user.state}!`;
   const html = `<p>Hi ${user.username},</p>
     <p>${artist} has a new event in ${user.state}:</p>

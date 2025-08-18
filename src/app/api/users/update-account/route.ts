@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
   try {
     const userId = await getDataFromToken(request);
     const body = await request.json();
-    const update: any = {};
+  const update: Record<string, unknown> = {};
     if (body.username) update.username = body.username;
     if (body.state) update.state = body.state;
     if (body.city) update.city = body.city;
@@ -29,7 +29,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: "Account info updated" });
     }
     return NextResponse.json({ error: "No valid fields to update" }, { status: 400 });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

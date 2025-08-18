@@ -13,8 +13,12 @@ export async function GET(request: NextRequest, context: { params: { name: strin
     const data = await res.json();
     // Try to find an exact match for the artist name (case-insensitive)
     let exact = null;
+    interface Attraction {
+      name: string;
+      [key: string]: unknown;
+    }
     if (data._embedded?.attractions?.length) {
-      exact = data._embedded.attractions.find((a: any) => a.name.toLowerCase() === decodeURIComponent(name).toLowerCase());
+      exact = data._embedded.attractions.find((a: Attraction) => a.name.toLowerCase() === decodeURIComponent(name).toLowerCase());
     }
     // If found, return only the exact match in the attractions array
     if (exact) {

@@ -19,7 +19,8 @@ export async function GET(request: NextRequest) {
     user.verifyTokenExpiry = undefined;
     await user.save();
     return NextResponse.json({ message: 'Email verified successfully' });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

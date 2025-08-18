@@ -4,10 +4,28 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
+
+interface Venue {
+  name?: string;
+  address?: { line1?: string };
+  city?: { name?: string };
+  state?: { name?: string };
+}
+
+interface Event {
+  id: string;
+  name: string;
+  dates?: { start?: { localDate?: string; localTime?: string; dateTime?: string } };
+  _embedded?: { venues?: Venue[] };
+  info?: string;
+  url?: string;
+  images?: { url: string; width: number }[];
+}
+
 const EventDetailsPage = () => {
   const { id } = useParams();
   const router = useRouter();
-  const [event, setEvent] = useState<any>(null);
+  const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -39,7 +57,7 @@ const EventDetailsPage = () => {
       {event.images && event.images.length > 0 && (
         (() => {
           // Pick the largest image by width
-          const bestImg = event.images.reduce((prev: any, curr: any) => (curr.width > prev.width ? curr : prev), event.images[0]);
+          const bestImg = event.images.reduce((prev, curr) => (curr.width > prev.width ? curr : prev), event.images[0]);
           return <img src={bestImg.url} alt={event.name} className="w-80 h-48 object-cover rounded mb-4" />;
         })()
       )}

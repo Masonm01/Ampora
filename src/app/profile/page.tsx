@@ -8,24 +8,35 @@ import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { useUserAuth } from '../../context/UserAuthContext';
 import { useFollowedArtists } from '../../context/FollowedArtistsContext';
 
+
+interface Event {
+    id: string;
+    name: string;
+    dates?: { start?: { localDate?: string; localTime?: string; dateTime?: string } };
+    _embedded?: { venues?: { name?: string; city?: { name?: string }; state?: { name?: string } }[] };
+    info?: string;
+    url?: string;
+    images?: { url: string; width: number }[];
+}
+
 const ProfilePage = () => {
-    const { user, logout: contextLogout, loading } = useUserAuth();
-    const router = useRouter();
-    const searchParams = useSearchParams();
-    const pathname = usePathname();
-    const [searchState, setSearchState] = useState("");
-    const [searchCity, setSearchCity] = useState("");
-    const [events, setEvents] = useState([]);
-    const { followedArtists } = useFollowedArtists();
-    const [collapsed, setCollapsed] = useState(false);
-    // In-memory cache for event search results
-    const eventCache = useRef<{ [key: string]: any }>({});
-    // Debounce timer
-    const debounceTimer = useRef<NodeJS.Timeout | null>(null);
-    const [cityOptions, setCityOptions] = useState<string[]>([]);
-    const [page, setPage] = useState(0);
-    const [pageInfo, setPageInfo] = useState({ totalPages: 1 });
-    const [searchTerm, setSearchTerm] = useState("");
+        const { user, logout: contextLogout, loading } = useUserAuth();
+        const router = useRouter();
+        const searchParams = useSearchParams();
+        const pathname = usePathname();
+        const [searchState, setSearchState] = useState("");
+        const [searchCity, setSearchCity] = useState("");
+        const [events, setEvents] = useState<Event[]>([]);
+        const { followedArtists } = useFollowedArtists();
+        const [collapsed, setCollapsed] = useState(false);
+        // In-memory cache for event search results
+        const eventCache = useRef<{ [key: string]: { events: Event[]; totalPages: number } }>({});
+        // Debounce timer
+        const debounceTimer = useRef<NodeJS.Timeout | null>(null);
+        const [cityOptions, setCityOptions] = useState<string[]>([]);
+        const [page, setPage] = useState(0);
+        const [pageInfo, setPageInfo] = useState({ totalPages: 1 });
+        const [searchTerm, setSearchTerm] = useState("");
 
     // Use contextLogout from context for logout
     const handleLogout = async () => {
@@ -34,9 +45,10 @@ const ProfilePage = () => {
             await contextLogout();
             toast.success('Logout successful');
             router.push('/');
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Error during logout:', error);
-            toast.error(error.message);
+            const message = error instanceof Error ? error.message : 'Logout failed';
+            toast.error(message);
         }
     };
 
@@ -116,15 +128,15 @@ const ProfilePage = () => {
         fetch(`/api/ticketmaster?${cacheKey}`)
             .then(res => res.json())
             .then(data => {
-                const events = data._embedded?.events || [];
+                const events: Event[] = data._embedded?.events || [];
                 const totalPages = data.page?.totalPages || 1;
-                                // Sort events by soonest date
-                                                const sortedEvents = events.slice().sort((a: any, b: any) => {
-                                                    const dateA = new Date(a.dates?.start?.dateTime || a.dates?.start?.localDate || 0).getTime();
-                                                    const dateB = new Date(b.dates?.start?.dateTime || b.dates?.start?.localDate || 0).getTime();
-                                                    return dateA - dateB;
-                                                });
-                                setEvents(sortedEvents);
+                // Sort events by soonest date
+                const sortedEvents = events.slice().sort((a: Event, b: Event) => {
+                    const dateA = new Date(a.dates?.start?.dateTime || a.dates?.start?.localDate || 0).getTime();
+                    const dateB = new Date(b.dates?.start?.dateTime || b.dates?.start?.localDate || 0).getTime();
+                    return dateA - dateB;
+                });
+                setEvents(sortedEvents);
                 setPageInfo({ totalPages });
                 // Save to cache
                 eventCache.current[cacheKey] = { events, totalPages };
@@ -274,7 +286,7 @@ const ProfilePage = () => {
                 </form>
                 <ul>
                     {events.length === 0 && <li>No events found.</li>}
-                    {events.map((event: any) => (
+                    {events.map((event: Event) => (
                         <li key={event.id} className="mb-2 p-2 border rounded flex items-center gap-4">
                     <Link href={`/event-details/${event.id}`} className="flex items-center gap-4 w-full rounded transition-colors" style={{ transition: 'background 0.2s', }}
                         onMouseEnter={e => (e.currentTarget.style.background = '#7c807e')} onMouseLeave={e => (e.currentTarget.style.background = '')}>

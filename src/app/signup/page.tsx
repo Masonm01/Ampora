@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import React, {useEffect, useState} from "react";
+import React, { useState, useEffect } from "react";
 import { US_STATES, US_CITIES } from "../helpers/usLocations";
 import {useRouter} from "next/navigation"
 import axios from "axios";
@@ -26,14 +26,24 @@ export default function SignupPage() {
             const response = await axios.post("/api/users/signup", user);
             console.log("Signup success", response.data);
             setShowCheckEmail(true);
-        } catch (error:any){
+        } catch (error: unknown){
             console.log("Signup Failed", error);
             // Show backend error message if available
-            const backendMsg = error.response?.data?.error;
+            let backendMsg: string | undefined;
+            if (
+                typeof error === 'object' &&
+                error !== null &&
+                'response' in error &&
+                typeof (error as { response?: unknown }).response === 'object' &&
+                (error as { response?: { data?: { error?: string } } }).response?.data?.error
+            ) {
+                backendMsg = (error as { response: { data: { error?: string } } }).response.data.error;
+            }
             if (backendMsg) {
                 toast.error(backendMsg);
             } else {
-                toast.error(error.message || "Signup failed");
+                const message = error instanceof Error ? error.message : "Signup failed";
+                toast.error(message);
             }
         } finally {
             setLoading(false);

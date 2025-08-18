@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import React, {useEffect} from "react";
+import React from "react";
 import {useRouter} from "next/navigation"
 
 import {toast} from "react-hot-toast"
@@ -20,8 +20,9 @@ export default function LoginPage() {
             await login(user.email, user.password);
             toast.success("Login Success");
             router.push("/profile");
-        } catch (error: any) {
-            toast.error(error.message || "Login failed");
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : "Login failed";
+            toast.error(message);
         }
     };
 
