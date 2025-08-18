@@ -2,12 +2,10 @@
 import Link from "next/link";
 import React, { useState, useEffect } from "react";
 import { US_STATES, US_CITIES } from "../helpers/usLocations";
-import {useRouter} from "next/navigation"
 import axios from "axios";
 import {toast} from "react-hot-toast"
 
 export default function SignupPage() {
-    const router = useRouter();
     const [user, setUser] = React.useState({
         email: "",
         password: "",

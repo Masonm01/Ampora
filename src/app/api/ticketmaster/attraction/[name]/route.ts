@@ -26,7 +26,7 @@ export async function GET(request: NextRequest, context: { params: { name: strin
     }
     // Otherwise, return the original data (first result will be used)
     return NextResponse.json(data);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Failed to fetch artist details" }, { status: 500 });
   }
 }

@@ -1,4 +1,5 @@
 "use client";
+import Image from 'next/image';
 import React, { useEffect, useState } from "react";
 import { useFollowedArtists } from '../../../context/FollowedArtistsContext';
 import { US_STATES, US_CITIES } from "../../helpers/usLocations";
@@ -118,7 +119,7 @@ const ArtistDetailsPage = () => {
         (() => {
           // Pick the largest image by width
           const bestImg = artist.images.reduce((prev, curr) => (curr.width > prev.width ? curr : prev), artist.images[0]);
-          return <img src={bestImg.url} alt={decodeURIComponent(artist.name)} className="w-64 h-64 object-cover rounded-full mb-4" />;
+          return <Image src={bestImg.url} alt={decodeURIComponent(artist.name)} width={256} height={256} className="w-64 h-64 object-cover rounded-full mb-4" />;
         })()
       ) : (
   <div className="w-64 h-64 rounded-full flex items-center justify-center text-2xl mb-4" style={{ background: 'var(--accent)', color: 'var(--secondary)' }}>No Image</div>

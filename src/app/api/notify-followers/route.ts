@@ -35,11 +35,6 @@ interface TicketmasterEvent {
 
 // Helper to send notification email
 async function sendEventNotification(user: NotificationUser, artist: string, event: TicketmasterEvent) {
-  const subject = `New ${artist} event in ${user.state}!`;
-  const html = `<p>Hi ${user.username},</p>
-    <p>${artist} has a new event in ${user.state}:</p>
-    <p><b>${event.name}</b><br/>${event.dates?.start?.localDate} - ${event._embedded?.venues?.[0]?.city?.name}, ${event._embedded?.venues?.[0]?.state?.stateCode}</p>
-    <p><a href="${event.url}">View Event</a></p>`;
   await sendVerificationEmail({
     to: user.email,
     username: user.username,

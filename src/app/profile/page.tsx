@@ -1,5 +1,6 @@
 "use client";
 import Link from 'next/link';
+import Image from 'next/image';
 import React, { useState, useEffect, useRef } from 'react';
 import { US_STATES, US_CITIES } from "../helpers/usLocations";
 import { toast } from 'react-hot-toast';
@@ -66,7 +67,7 @@ const ProfilePage = () => {
         if (stateParam && US_CITIES[stateParam]) {
             setCityOptions(US_CITIES[stateParam]);
         }
-    }, [user]);
+    }, [user, searchParams]);
 
     // Helper to update URL query params
     const updateQueryParams = (params: Record<string, string | number>) => {
@@ -221,7 +222,7 @@ const ProfilePage = () => {
                                                                             } else {
                                                                                 toast.error(data.error || 'Failed to resend email.');
                                                                             }
-                                                                        } catch (err) {
+                                                                        } catch {
                                                                             toast.error('Failed to resend email.');
                                                                         }
                                                                     }}
@@ -291,7 +292,7 @@ const ProfilePage = () => {
                     <Link href={`/event-details/${event.id}`} className="flex items-center gap-4 w-full rounded transition-colors" style={{ transition: 'background 0.2s', }}
                         onMouseEnter={e => (e.currentTarget.style.background = '#7c807e')} onMouseLeave={e => (e.currentTarget.style.background = '')}>
                                 {event.images && event.images[0] && (
-                                    <img src={event.images[0].url} alt={event.name} className="w-24 h-16 object-cover rounded" />
+                                    <Image src={event.images[0].url} alt={event.name} width={96} height={64} className="w-24 h-16 object-cover rounded" />
                                 )}
                                 <div>
                                     <strong>{event.name}</strong> <br />

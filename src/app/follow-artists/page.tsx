@@ -1,4 +1,5 @@
 "use client";
+import Image from 'next/image';
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
@@ -94,7 +95,7 @@ const FollowArtistsPage = () => {
           <li key={artist.name} className="flex justify-between items-center border-b py-2 gap-2" style={{ borderColor: 'var(--secondary)' }}>
             <div className="flex items-center gap-2 cursor-pointer" onClick={() => router.push(`/artist-details/${encodeURIComponent(artist.name)}`)}>
               {artist.image ? (
-                <img src={artist.image} alt={decodeURIComponent(artist.name)} className="w-10 h-10 object-cover rounded-full" />
+                <Image src={artist.image} alt={decodeURIComponent(artist.name)} width={40} height={40} className="w-10 h-10 object-cover rounded-full" />
               ) : (
                 <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-gray-500 text-xs">No Image</div>
               )}

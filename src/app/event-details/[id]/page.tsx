@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import Image from 'next/image';
 import { useParams } from "next/navigation";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 
@@ -58,7 +58,7 @@ const EventDetailsPage = () => {
         (() => {
           // Pick the largest image by width
           const bestImg = event.images.reduce((prev, curr) => (curr.width > prev.width ? curr : prev), event.images[0]);
-          return <img src={bestImg.url} alt={event.name} className="w-80 h-48 object-cover rounded mb-4" />;
+          return <Image src={bestImg.url} alt={event.name} width={320} height={192} className="w-80 h-48 object-cover rounded mb-4" />;
         })()
       )}
       {/* Event Description */}

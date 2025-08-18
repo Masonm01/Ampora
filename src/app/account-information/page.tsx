@@ -46,7 +46,7 @@ const AccountInformationPage = () => {
       const data = await res.json();
       if (res.ok) toast.success("Account info updated");
       else toast.error(data.error || "Update failed");
-    } catch (err) {
+    } catch {
       toast.error("An error occurred. Please try again.");
     }
   };
@@ -73,7 +73,7 @@ const AccountInformationPage = () => {
         toast.error(data.error || "Password update failed");
       }
       setOldPassword(""); setNewPassword(""); setConfirmPassword("");
-    } catch (err) {
+    } catch {
       toast.error("An error occurred. Please try again.");
     }
   };

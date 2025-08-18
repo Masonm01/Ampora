@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 export default function VerifyEmailPage() {
-  const router = useRouter();
+  // const router = useRouter();
   const searchParams = useSearchParams();
   const [status, setStatus] = useState<'pending'|'success'|'error'>("pending");
   const [message, setMessage] = useState("");

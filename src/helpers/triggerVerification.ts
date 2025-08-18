@@ -1,7 +1,6 @@
 // This helper can be used to trigger sending a verification email after signup
 import { sendVerificationEmail } from './sendVerificationEmail';
 import crypto from 'crypto';
-import User from '@/models/userModel';
 
 interface UserType {
   email: string;

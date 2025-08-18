@@ -1,5 +1,6 @@
 
 import Link from "next/link";
+import Image from 'next/image';
 
 export default function Home() {
 
@@ -60,17 +61,17 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-4xl">
           {/* Simple mock events with image and date only */}
               <div className="bg-blue-950 bg-opacity-80 rounded-lg p-4 shadow flex flex-col items-center">
-                <img src="/demopics/taylor-swift.jpg" alt="Taylor Swift" className="w-24 h-24 object-cover rounded-full mb-2 border-2 border-blue-700" />
+                <Image src="/demopics/taylor-swift.jpg" alt="Taylor Swift" width={96} height={96} className="w-24 h-24 object-cover rounded-full mb-2 border-2 border-blue-700" />
                 <div className="text-white font-semibold">Taylor Swift</div>
                 <div className="text-blue-200 text-sm">Aug 30 &bull; Los Angeles, CA</div>
               </div>
               <div className="bg-blue-950 bg-opacity-80 rounded-lg p-4 shadow flex flex-col items-center">
-                <img src="/demopics/lollapalooza.jpg" alt="Lollapalooza" className="w-24 h-24 object-cover rounded-full mb-2 border-2 border-blue-700" />
+                <Image src="/demopics/lollapalooza.jpg" alt="Lollapalooza" width={96} height={96} className="w-24 h-24 object-cover rounded-full mb-2 border-2 border-blue-700" />
                 <div className="text-white font-semibold">Lollapalooza</div>
                 <div className="text-blue-200 text-sm">Sep 5-7 &bull; Chicago, IL</div>
               </div>
               <div className="bg-blue-950 bg-opacity-80 rounded-lg p-4 shadow flex flex-col items-center">
-                <img src="/demopics/beyonce.jpg" alt="Beyoncé" className="w-24 h-24 object-cover rounded-full mb-2 border-2 border-blue-700" />
+                <Image src="/demopics/beyonce.jpg" alt="Beyoncé" width={96} height={96} className="w-24 h-24 object-cover rounded-full mb-2 border-2 border-blue-700" />
                 <div className="text-white font-semibold">Beyoncé</div>
                 <div className="text-blue-200 text-sm">Sep 12 &bull; New York, NY</div>
               </div>
@@ -82,22 +83,22 @@ export default function Home() {
         {/* Demo follow feature */}
         <div className="bg-blue-950 bg-opacity-80 rounded-lg p-6 shadow flex flex-col md:flex-row items-center gap-6 max-w-xl w-full justify-center">
           <div className="flex flex-col items-center">
-            <img src="/demopics/foo-fighters.avif" alt="Foo Fighters" className="w-16 h-16 object-cover rounded-full mb-2 border-2 border-blue-700" />
+            <Image src="/demopics/foo-fighters.avif" alt="Foo Fighters" width={64} height={64} className="w-16 h-16 object-cover rounded-full mb-2 border-2 border-blue-700" />
             <div className="text-white font-semibold mb-2">Foo Fighters</div>
             <button className="px-4 py-2 rounded-full font-semibold transition" style={{ background: 'var(--accent)', color: 'white' }}>Unfollow</button>
           </div>
           <div className="flex flex-col items-center">
-            <img src="/demopics/polyphia.jpg" alt="Polyphia" className="w-16 h-16 object-cover rounded-full mb-2 border-2 border-blue-700" />
+            <Image src="/demopics/polyphia.jpg" alt="Polyphia" width={64} height={64} className="w-16 h-16 object-cover rounded-full mb-2 border-2 border-blue-700" />
             <div className="text-white font-semibold mb-2">Polyphia</div>
             <button className="px-4 py-2 bg-blue-600 text-white rounded-full font-semibold hover:bg-blue-700 transition">Follow</button>
           </div>
           <div className="flex flex-col items-center">
-            <img src="/demopics/radiohead.jpg" alt="Radiohead" className="w-16 h-16 object-cover rounded-full mb-2 border-2 border-blue-700" />
+            <Image src="/demopics/radiohead.jpg" alt="Radiohead" width={64} height={64} className="w-16 h-16 object-cover rounded-full mb-2 border-2 border-blue-700" />
             <div className="text-white font-semibold mb-2">Radiohead</div>
             <button className="px-4 py-2 rounded-full font-semibold transition" style={{ background: 'var(--accent)', color: 'white' }}>Unfollow</button>
           </div>
           <div className="flex flex-col items-center">
-            <img src="/demopics/band-of-horses.jpg" alt="Band of Horses" className="w-16 h-16 object-cover rounded-full mb-2 border-2 border-blue-700" />
+            <Image src="/demopics/band-of-horses.jpg" alt="Band of Horses" width={64} height={64} className="w-16 h-16 object-cover rounded-full mb-2 border-2 border-blue-700" />
             <div className="text-white font-semibold mb-2">Band of Horses</div>
             <button className="px-4 py-2 bg-blue-600 text-white rounded-full font-semibold hover:bg-blue-700 transition">Follow</button>
           </div>
