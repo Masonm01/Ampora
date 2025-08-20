@@ -8,9 +8,6 @@ import { useFollowedArtists } from '../../context/FollowedArtistsContext';
 
 const FollowArtistsPage = () => {
   const [search, setSearch] = useState("");
-
-const FollowArtistsPage = () => {
-  const [search, setSearch] = useState("");
   const [results, setResults] = useState<{ name: string, image?: string }[]>([]);
   const [loading, setLoading] = useState(false);
   const { followedArtists, followArtist, unfollowArtist, isFollowing } = useFollowedArtists();
@@ -150,7 +147,5 @@ const FollowArtistsPage = () => {
     </div>
   );
 };
-
-}
 
 export default FollowArtistsPage;

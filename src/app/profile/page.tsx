@@ -2,7 +2,7 @@
 "use client";
 import Link from 'next/link';
 import Image from 'next/image';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, Suspense } from 'react';
 import { US_STATES, US_CITIES } from "../helpers/usLocations";
 import { toast } from 'react-hot-toast';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
@@ -21,7 +21,7 @@ interface Event {
     images?: { url: string; width: number }[];
 }
 
-const ProfilePage = () => {
+function ProfilePageContent() {
     const { user, logout: contextLogout } = useUserAuth();
         const router = useRouter();
         const searchParams = useSearchParams();
@@ -329,4 +329,10 @@ const ProfilePage = () => {
     );
 }
 
-export default ProfilePage;
+export default function ProfilePage() {
+    return (
+        <Suspense fallback={<div>Loading profile...</div>}>
+            <ProfilePageContent />
+        </Suspense>
+    );
+}

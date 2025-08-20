@@ -1,32 +1,72 @@
 
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest} from "next/server";
 
-export async function GET(request: NextRequest, { params }: { params: { name: string } }) {
+// app/api/artist/[name]/route.ts
+import { NextResponse } from "next/server";
+
+// If you accidentally set edge earlier and need env vars, keep this on Node:
+export const runtime = "nodejs";
+
+type TMAttraction = { name: string; [k: string]: unknown };
+type TMResponse = {
+  _embedded?: { attractions?: TMAttraction[] };
+  [k: string]: unknown;
+};
+
+export async function GET(_req: NextRequest, { params }: { params: Promise<{ name: string }> }) {
   const apiKey = process.env.TICKETMASTER_API_KEY;
-  const name = params.name;
-  if (!name) {
-    return NextResponse.json({ error: "Missing artist name" }, { status: 400 });
+  const name = (await params).name.trim();
+
+  if (!apiKey) {
+    return NextResponse.json(
+      { error: "Server is missing TICKETMASTER_API_KEY" },
+      { status: 500 }
+    );
   }
-  const url = `https://app.ticketmaster.com/discovery/v2/attractions.json?apikey=${apiKey}&keyword=${encodeURIComponent(name)}`;
+
+  if (!name) {
+    return NextResponse.json(
+      { error: "Missing artist name" },
+      { status: 400 }
+    );
+  }
+
+  const url = `https://app.ticketmaster.com/discovery/v2/attractions.json?apikey=${apiKey}&keyword=${encodeURIComponent(
+    name
+  )}`;
+
   try {
-    const res = await fetch(url);
-    const data = await res.json();
-    // Try to find an exact match for the artist name (case-insensitive)
-    let exact = null;
-    interface Attraction {
-      name: string;
-      [key: string]: unknown;
+    const res = await fetch(url, {
+      // Optional: make responses cacheable if you want
+      // next: { revalidate: 60 },
+    });
+
+    if (!res.ok) {
+      return NextResponse.json(
+        { error: `Ticketmaster responded ${res.status}` },
+        { status: 502 }
+      );
     }
-    if (data._embedded?.attractions?.length) {
-      exact = data._embedded.attractions.find((a: Attraction) => a.name.toLowerCase() === decodeURIComponent(name).toLowerCase());
-    }
-    // If found, return only the exact match in the attractions array
+
+    const data = (await res.json()) as TMResponse;
+
+    const attractions = data._embedded?.attractions ?? [];
+
+    // Exact, case-insensitive match
+    const exact = attractions.find(
+      (a) => typeof a.name === "string" && a.name.toLowerCase() === name.toLowerCase()
+    );
+
     if (exact) {
       return NextResponse.json({ _embedded: { attractions: [exact] } });
     }
-    // Otherwise, return the original data (first result will be used)
+
     return NextResponse.json(data);
-  } catch {
-    return NextResponse.json({ error: "Failed to fetch artist details" }, { status: 500 });
+  } catch (err) {
+    console.error("Ticketmaster fetch failed:", err);
+    return NextResponse.json(
+      { error: "Failed to fetch artist details" },
+      { status: 500 }
+    );
   }
 }

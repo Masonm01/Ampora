@@ -1,11 +1,8 @@
 "use client";
-import { useEffect, useState } from "react";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-// ...existing code...
 
-export default function VerifyEmailPage() {
-  // const router = useRouter();
+function VerifyEmailPageContent() {
   const searchParams = useSearchParams();
   const [status, setStatus] = useState<'pending'|'success'|'error'>("pending");
   const [message, setMessage] = useState("");
@@ -55,5 +52,13 @@ export default function VerifyEmailPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function VerifyEmailPage() {
+  return (
+    <Suspense fallback={<div>Verifying your email...</div>}>
+      <VerifyEmailPageContent />
+    </Suspense>
   );
 }
